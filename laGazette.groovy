@@ -12,26 +12,35 @@ def URL_GENERALE = "http://www.lagazettedescommunes.com/rubriques/"
 
 def pathDirectory = "d:\\Documents\\Marc\\Programme\\Capteur-Page-Internet\\"
 //new File(pathDirectory+'log.txt').delete()
-def log = new File(pathDirectory+'log.txt')
+def log = new File(pathDirectory+'laGazette.log')
 
 def toAddress = "marc.prevot888@gmail.com"
-//def toAddress = "marc.prevot@free.fr"
 def annoncesGlobale = []
 def nbArticles = 0
+def urlS = []
+
+log <<  "Traitement du : " + new Date() + " \n"
+//récupération des liens
 ["actualite","actu-juridique","textes-officiels","jurisprudence","reponses-ministerielles","club-technique"].each
 { type ->
-    def urlS = getUrlArticles(URL_GENERALE+type,log)
-   // annonces     
-    println "---------  v2 ${type} (${urlS?.size()})  -------------- "
-    log <<  "---------  v2 ${type} (${urlS?.size()})  -------------- \n"
-    urlS.each 
-    {
-        println it
-        def article = getArticle(it,log)
-        if (article) {annoncesGlobale.add(article);nbArticles++;}
-        //println article
-    }
+    def tmpUrl = getUrlArticles(URL_GENERALE+type,log)
+	urlS.addAll(tmpUrl)
+    println "---------  ${type} (${urlS?.size()})  -------------- "
+    log <<  "---------  ${type} (${urlS?.size()})  -------------- \n"
 }
+
+urlS = urlS.toSet()
+println "---------  total net (${urlS?.size()})  -------------- "
+log <<  "---------  total net (${urlS?.size()})  -------------- \n"
+
+// traitement des liens
+urlS.each
+{
+	println it
+	def article = getArticle(it,log)
+	if (article) {annoncesGlobale.add(article);nbArticles++;}
+}
+
 sendMailFinal(annoncesGlobale,toAddress,nbArticles)
 
 def getArticle(urlArticle,log)
