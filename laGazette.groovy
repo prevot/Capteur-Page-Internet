@@ -10,7 +10,7 @@ import org.jsoup.nodes.Document
 
 def URL_GENERALE = "http://www.lagazettedescommunes.com/rubriques/"
 
-def pathDirectory = "d:\\Documents\\Marc\\Programme\\Groovy\\Leboncoin\\"
+def pathDirectory = "d:\\Documents\\Marc\\Programme\\Capteur-Page-Internet\\"
 //new File(pathDirectory+'log.txt').delete()
 def log = new File(pathDirectory+'log.txt')
 
