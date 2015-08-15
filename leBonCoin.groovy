@@ -1,7 +1,8 @@
-
+@Grapes( @Grab(group='javax.mail', module='mail', version='1.4.7'))
 import javax.mail.internet.*;
 import javax.mail.*
 import javax.activation.*
+
 import groovy.xml.*
 
 def url="http://www.leboncoin.fr/annonces/offres/midi_pyrenees/?f=p&th=1&"
