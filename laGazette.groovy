@@ -19,19 +19,19 @@ def annoncesGlobale = []
 def nbArticles = 0
 def urlS = []
 
-log <<  "Traitement du : " + new Date() + " \n"
+log <<  " \n Traitement du : " + new Date() + " \n"
 //récupération des liens
 ["actualite","actu-juridique","textes-officiels","jurisprudence","reponses-ministerielles","club-technique"].each
 { type ->
     def tmpUrl = getUrlArticles(URL_GENERALE+type,log)
 	urlS.addAll(tmpUrl)
-    println "---------  ${type} (${urlS?.size()})  -------------- "
-    log <<  "---------  ${type} (${urlS?.size()})  -------------- \n"
+    println "---------  ${type} (${tmpUrl?.size()})  -------------- "
+    log <<  "---------  ${type} (${tmpUrl?.size()})  -------------- \n"
 }
 
 urlS = urlS.toSet()
-println "---------  total net (${urlS?.size()})  -------------- "
-log <<  "---------  total net (${urlS?.size()})  -------------- \n"
+println "*********  total brut (${urlS?.size()})"
+log <<  "*********  total brut (${urlS?.size()}) \n"
 
 // traitement des liens
 urlS.each
@@ -40,7 +40,8 @@ urlS.each
 	def article = getArticle(it,log)
 	if (article) {annoncesGlobale.add(article);nbArticles++;}
 }
-
+println "*********  total net (${annoncesGlobale?.size()})"
+log <<  "*********  total net (${annoncesGlobale?.size()}) \n"
 sendMailFinal(annoncesGlobale,toAddress,nbArticles)
 
 def getArticle(urlArticle,log)
@@ -56,7 +57,7 @@ def getArticle(urlArticle,log)
       def titre   = doc.select("h1"   ).select("[itemprop=headline]"       ).first();
       def datePub = doc.select("time" ).select("[itemprop=datePublished]"  ).first()?.text();
       def dateArticle = new java.text.SimpleDateFormat("dd/MM/yy", Locale.FRANCE).parse(datePub)
-      def dateJour = new Date()-1
+      def dateJour = new Date()
 	  dateJour.clearTime()
       if ( dateJour.equals(dateArticle))
       {
@@ -67,7 +68,7 @@ def getArticle(urlArticle,log)
           println "Article trop vieux !!!   " + datePub
       }
     }
-    catch (Exception e) {e.printStackTrace();log << "article illisible " + urlArticle + e.printStackTrace()}   
+    catch (Exception e) {e.printStackTrace();log << "article illisible " + urlArticle + e.printStackTrace() + "\n"}   
     res
 }
 
@@ -84,7 +85,7 @@ def getUrlArticles(def url,def log)
         res  = doc.select("li.actus-liste-item").select("h3 a[href]")*.attr("href")    ;    urlS.addAll(res)
         res  = doc.select("div.actus-liste-titre").select("h3 a[href]")*.attr("href")  ;    urlS.addAll(res)
     }
-    catch (Exception e) {println "url illisible";log <<  "url illisible" + url + ".........."+ e.printStackTrace();}
+    catch (Exception e) {println "url illisible";log <<  "url illisible" + url + ".........."+ e.printStackTrace()+ "\n";}
     urlS
 }
 
